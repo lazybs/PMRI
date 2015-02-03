@@ -11,20 +11,33 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 
-public class MapsActivity extends FragmentActivity {
+import android.widget.TextView;
+
+
+
+public class MapsActivity extends FragmentActivity implements  OnMapLongClickListener{
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    LocationManager locationManager;
+    private LocationManager locationManager;
     Location location;
-    GoogleMap.OnMapClickListener click ;
+    TextView tvLocInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         setContentView(R.layout.activity_maps);
+
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
         setUpMapIfNeeded();
+
+        mMap.setOnMapLongClickListener(this);
+
+
     }
 
     @Override
@@ -61,10 +74,10 @@ public class MapsActivity extends FragmentActivity {
                 Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 double lat = location.getLatitude();
                 double log = location.getLongitude();
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,log),12));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,log),15));
 
 
-                mMap.setOnMapClickListener(click);
+
 
             }
         }
@@ -86,11 +99,11 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
-    public void onMapClick(LatLng latLng) {
-        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        double lat = location.getLatitude();
-        double log = location.getLongitude();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,log),12));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(lat,log)).title("deine mudder"));
+
+    @Override
+    public void onMapLongClick(LatLng point) {
+       // tvLocInfo.setText("New marker added@" + point.toString());
+        mMap.addMarker(new MarkerOptions().position(point).title("new socket").snippet(""));
+
     }
 }
