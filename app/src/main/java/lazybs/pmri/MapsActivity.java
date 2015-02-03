@@ -1,8 +1,12 @@
 package lazybs.pmri;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -11,10 +15,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    LocationManager locationManager;
+    Location location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
     }
@@ -46,9 +53,15 @@ public class MapsActivity extends FragmentActivity {
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
+            mMap.setMyLocationEnabled(true);
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
+                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                double lat = location.getLatitude();
+                double log = location.getLongitude();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,log),12));
+
             }
         }
     }
@@ -61,5 +74,11 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(51.03803,13.69432)).title("Loebtau Socket"));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(51.026664, 13.725405))
+                .title("UniSocket")
+                .snippet("additional information"));
+
     }
 }
