@@ -17,6 +17,7 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     LocationManager locationManager;
     Location location;
+    GoogleMap.OnMapClickListener click ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,9 @@ public class MapsActivity extends FragmentActivity {
                 double log = location.getLongitude();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,log),12));
 
+
+                mMap.setOnMapClickListener(click);
+
             }
         }
     }
@@ -80,5 +84,13 @@ public class MapsActivity extends FragmentActivity {
                 .title("UniSocket")
                 .snippet("additional information"));
 
+    }
+
+    public void onMapClick(LatLng latLng) {
+        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        double lat = location.getLatitude();
+        double log = location.getLongitude();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,log),12));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(lat,log)).title("deine mudder"));
     }
 }
