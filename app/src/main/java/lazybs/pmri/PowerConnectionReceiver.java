@@ -1,13 +1,12 @@
 package lazybs.pmri;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.BatteryManager;
-import android.widget.Toast;
+import android.preference.PreferenceManager;
 
 public class PowerConnectionReceiver extends BroadcastReceiver {
     static final String EXTRA_BATTERY_LOW = "lazybs.pmri..EXTRA_BATTERY_LOW";
@@ -32,14 +31,17 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        if (level < 10) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int storedPreference = preferences.getInt("storedInt", 30);
+
+        if (level < storedPreference) {
             sendIntent.putExtra(this.EXTRA_BATTERY_LOW, level);
         }
         if (isCharging) {
                 sendIntent.putExtra(this.EXTRA_CHARGING_USB, usbCharge);
                 sendIntent.putExtra(this.EXTRA_CHARGING_AC, acCharge);
         }
-        if (level < 10 || isCharging) {
+        if (level < storedPreference || isCharging) {
             sendIntent.setClassName("lazybs.pmri", "lazybs.pmri.MainActivity2");
             sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(sendIntent);
